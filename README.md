@@ -83,6 +83,9 @@ Check configuration on ./config directory
 + 6  -  Ubuntu Server 22.04 LTS (cloud-init)
 + 51  -  Ubuntu Server 22.04 K8SNode (From Template)
 
+**Info:**
+This module was setup to use IP 10.70.70.135 as IP for template VM.
+
 
 ## Contributing
 
