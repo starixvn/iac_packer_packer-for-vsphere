@@ -173,29 +173,29 @@ source "vsphere-iso" "linux-ubuntu" {
 
   // Template and Content Library Settings
   convert_to_template = var.common_template_conversion
-  //  dynamic "content_library_destination" {
-  //    for_each = var.common_content_library_name != null ? [1] : []
-  //    content {
-  //      library     = var.common_content_library_name
-  //      description = local.build_description
-  //      ovf         = var.common_content_library_ovf
-  //      destroy     = var.common_content_library_destroy
-  //      skip_import = var.common_content_library_skip_export
-  //    }
-  //  }
-  //
-  //  // OVF Export Settings
-  //  dynamic "export" {
-  //    for_each = var.common_ovf_export_enabled == true ? [1] : []
-  //    content {
-  //      name  = local.vm_name
-  //      force = var.common_ovf_export_overwrite
-  //      options = [
-  //        "extraconfig"
-  //      ]
-  //      output_directory = local.ovf_export_path
-  //    }
-  //  }
+  dynamic "content_library_destination" {
+    for_each = var.common_content_library_name != null ? [1] : []
+    content {
+      library     = var.common_content_library_name
+      description = local.build_description
+      ovf         = var.common_content_library_ovf
+      destroy     = var.common_content_library_destroy
+      skip_import = var.common_content_library_skip_export
+    }
+  }
+
+  // OVF Export Settings
+  dynamic "export" {
+    for_each = var.common_ovf_export_enabled == true ? [1] : []
+    content {
+      name  = local.vm_name
+      force = var.common_ovf_export_overwrite
+      options = [
+        "extraconfig"
+      ]
+      output_directory = local.ovf_export_path
+    }
+  }
 }
 
 //  BLOCK: build

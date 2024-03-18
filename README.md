@@ -59,6 +59,31 @@ This project supports the following guest operating systems:
 
 Please refer to the [documentation][documentation] for more detailed information about this project.
 
+## Build Module
+
+**Requirement:**
++ packer
++ xorriso (for linux OS)
++ oscdimg (for windows OS)
++ ansible core 2.14.9rc1 (for kubespray anisble runner)
+
+**Setup env variable:**
+Check configuration on ./config directory
+
+| File name					| Configuration Content
+| :---						| :---
+| build.pkrvars.hcl 		| build user credential
+| vsphere.pkrvars.hcl 		| login information vsphere
+| common.pkrvars.hcl 		| common configuration for runner
+
+**Run Build:**
+`./build.sh`
+
+**Pre-checked option:**
++ 6  -  Ubuntu Server 22.04 LTS (cloud-init)
++ 51  -  Ubuntu Server 22.04 K8SNode (From Template)
+
+
 ## Contributing
 
 The project team welcomes contributions from the community. Please read our [Developer Certificate of Origin][vmware-cla-dco]. All contributions to this repository must be signed as described on that page. Your signature certifies that you wrote the patch or have the right to pass it on as an open-source patch.

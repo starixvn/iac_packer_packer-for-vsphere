@@ -1348,7 +1348,7 @@ menu_option_51() {
   BUILD_PATH=${INPUT_PATH#"${SCRIPT_PATH}/builds/"}
   BUILD_VARS="$(echo "${BUILD_PATH%/}" | tr -s '/' | tr '/' '-').pkrvars.hcl"
 
-  echo -e "\nCONFIRM: Build a Ubuntu Server 22.04 LTS (cloud-init) Template for VMware vSphere?"
+  echo -e "\nCONFIRM: Build a Ubuntu Server 22.04 K8S Template for VMware vSphere?"
   echo -e "\nContinue? (y/n)"
   read -r REPLY
   if [[ ! $REPLY =~ ^[Yy]$ ]]; then
@@ -1448,7 +1448,8 @@ until [ "$selection" = "0" ]; do
   echo "    	35  -  Windows 10 - Professional Only"
   echo ""
   echo "      Custom OS:"
-  echo "      51  -  Ubuntu Server 22.04 K8SNode (From Template)"
+  echo ""
+  echo "        51  -  Ubuntu Server 22.04 K8SNode (From Template)"
   echo ""
   echo "      Other:"
   echo ""
