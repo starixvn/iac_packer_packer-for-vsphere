@@ -70,7 +70,7 @@ Please refer to the [documentation][documentation] for more detailed information
 **Setup env variable:**
 Check configuration on ./config directory
 
-| File name					| Configuration Content
+| File name					| Description
 | :---						| :---
 | build.pkrvars.hcl 		| build user credential
 | vsphere.pkrvars.hcl 		| login information vsphere
