@@ -1,0 +1,36 @@
+---
+# Tasks for unregistering from Red Hat Subscription Manager.
+- name: "Unregistering from Red Hat Subscription Manager."
+  redhat_subscription:
+    state: absent
+  when: ansible_distribution == 'RedHat'
+  
+# Tasks for configuring SSH for public key authentication.
+- name: "Configuring SSH for Public Key Authentication."
+  block:
+    - lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PermitRootLogin'
+        line: 'PermitRootLogin no'
+    - lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PubkeyAuthentication'
+        line: 'PubkeyAuthentication yes'
+
+# Tasks for setting the hostname.
+- name: "Setting the hostname."
+  hostname:
+    name: "localhost"
+
+# Tasks for disabling SELinux.
+- name: "Disabling SELinux."
+  selinux:
+    state: disabled
+    policy: targeted
+
+# Tasks for restarting the SSH daemon.
+- name: "Restarting the SSH daemon."
+  systemd:
+    name: sshd
+    state: restarted
+    daemon_reload: true

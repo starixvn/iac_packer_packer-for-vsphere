@@ -1,0 +1,42 @@
+---
+# Tasks for creating the local group for Ansible.
+- name: "Creating the local group for Ansible."
+  group:
+    name: "{{ ANSIBLE_USERNAME }}"
+
+# Tasks for creating the sudo group.
+- name: "Creating the sudo group."
+  group:
+    name: sudo
+
+# Tasks for creating the local user for Ansible.
+- name: "Creating the local user for Ansible."
+  user:
+    name: "{{ ANSIBLE_USERNAME }}"
+    group: "{{ ANSIBLE_USERNAME }}"
+    groups: sudo
+    password: '!'
+    shell: /bin/bash
+
+# Tasks for managing the authorized keys for the local users.
+- name: "Managing the authorized keys for the local users."
+  ansible.posix.authorized_key:
+    user: "{{ item.user }}"
+    key: "{{ item.key }}"
+  loop:
+    - user: "{{ ANSIBLE_USERNAME }}"
+      key: "{{ ANSIBLE_KEY }}"
+    - user: "{{ BUILD_USERNAME }}"
+      key: "{{ BUILD_KEY }}"
+  no_log: true
+
+# Tasks for managing sudoers.d for the local users.
+- name: "Managing sudoers.d for the local users."
+  community.general.sudoers:
+    name: "{{ item }}"
+    user: "{{ item }}"
+    commands: ALL
+  loop:
+    - "{{ BUILD_USERNAME }}"
+    - "{{ ANSIBLE_USERNAME }}"
+
