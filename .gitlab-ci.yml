@@ -93,6 +93,15 @@ Ubuntu-Server-22.04-LTS:
 
 ##############################################################################
 
+Ubuntu-Server-22.04-LTS-k8snode:
+    extends: .packer-build
+    variables:
+        INPUT_PATH: "$SCRIPT_PATH/builds/linux/ubuntu/22-04-k8snode/"
+        BUILD_VARS: "linux-ubuntu-22-04-k8snode.pkrvars.hcl"
+        EXTRA_VAR_FILES: "-var-file=$CONFIG_PATH/network.pkrvars.hcl -var-file=$CONFIG_PATH/linux-storage.pkrvars.hcl"
+
+##############################################################################
+
 Ubuntu-Server-20.04-LTS:
     extends: .packer-build
     variables:

@@ -1343,6 +1343,43 @@ menu_option_35() {
   echo "Build Complete."
 }
 
+menu_option_51() {
+  INPUT_PATH="$SCRIPT_PATH"/builds/linux/ubuntu/22-04-k8snode/
+  BUILD_PATH=${INPUT_PATH#"${SCRIPT_PATH}/builds/"}
+  BUILD_VARS="$(echo "${BUILD_PATH%/}" | tr -s '/' | tr '/' '-').pkrvars.hcl"
+
+  echo -e "\nCONFIRM: Build a Ubuntu Server 22.04 LTS (cloud-init) Template for VMware vSphere?"
+  echo -e "\nContinue? (y/n)"
+  read -r REPLY
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    exit 1
+  fi
+
+  ### Build a Ubuntu Server 22.04 LTS (cloud-init) Template for VMware vSphere. ###
+  echo "Building a Ubuntu Server 22.04 LTS (cloud-init) Template for VMware vSphere..."
+
+  ### Initialize HashiCorp Packer and required plugins. ###
+  echo "Initializing HashiCorp Packer and required plugins..."
+  packer init "$INPUT_PATH"
+
+  ### Start the Build. ###
+  echo "Starting the build...."
+  echo "packer build -force -on-error=ask $debug_option"
+  packer build -force -on-error=ask $debug_option \
+      -var-file="$CONFIG_PATH/vsphere.pkrvars.hcl" \
+      -var-file="$CONFIG_PATH/build.pkrvars.hcl" \
+      -var-file="$CONFIG_PATH/ansible.pkrvars.hcl" \
+      -var-file="$CONFIG_PATH/proxy.pkrvars.hcl" \
+      -var-file="$CONFIG_PATH/common.pkrvars.hcl" \
+      -var-file="$CONFIG_PATH/network.pkrvars.hcl" \
+      -var-file="$CONFIG_PATH/linux-storage.pkrvars.hcl" \
+      -var-file="$CONFIG_PATH/$BUILD_VARS" \
+      "$INPUT_PATH"
+
+  ### Build Complete. ###
+  echo "Build Complete."
+}
+
 press_enter() {
   cd "$SCRIPT_PATH"
   echo -n "Press Enter to continue."
@@ -1410,6 +1447,9 @@ until [ "$selection" = "0" ]; do
   echo "    	34  -  Windows 10 - Enterprise Only"
   echo "    	35  -  Windows 10 - Professional Only"
   echo ""
+  echo "      Custom OS:"
+  echo "      51  -  Ubuntu Server 22.04 K8SNode (From Template)"
+  echo ""
   echo "      Other:"
   echo ""
   echo "        I   -  Information"
@@ -1453,6 +1493,7 @@ until [ "$selection" = "0" ]; do
     33 ) clear ; menu_option_33 ; press_enter ;;
     34 ) clear ; menu_option_34 ; press_enter ;;
     35 ) clear ; menu_option_35 ; press_enter ;;
+    51 ) clear ; menu_option_51 ; press_enter ;;
     i|I ) clear ; info ; press_enter ;;
     q|Q ) clear ; exit ;;
     * ) clear ; incorrect_selection ; press_enter ;;
