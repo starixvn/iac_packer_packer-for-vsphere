@@ -76,7 +76,10 @@ build_runner:
     PACKER_PLUGIN_PATH: ".packer.d/plugins"
   script:
     - "packer init \"$INPUT_PATH\""
-    - "packer validate -var-file=\"$PACKERVAR_VSPHERE_LOCAL\" -var-file=\"$PACKERVAR_BUILDUSER_CRED\" -var-file=\"$PACKERVAR_ANSIBLE_CRED\" -var-file=\"$CONFIG_PATH/proxy.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/common.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/$BUILD_VARS\" ${EXTRA_VAR_FILES} \"$INPUT_PATH\""
+    - "cat $PACKERVAR_VSPHERE_LOCAL > vsphere.pkrvars.hcl"
+    - "cat $PACKERVAR_BUILDUSER_CRED > build.pkrvars.hcl"
+    - "cat $PACKERVAR_ANSIBLE_CRED > ansible.pkrvars.hcl"
+    - "packer validate -var-file=\"vsphere.pkrvars.hcl\" -var-file=\"build.pkrvars.hcl\" -var-file=\"ansible.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/proxy.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/common.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/$BUILD_VARS\" ${EXTRA_VAR_FILES} \"$INPUT_PATH\""
   artifacts:
     paths:
       - ".packer.d/plugins"
@@ -92,7 +95,10 @@ build_runner:
   variables:
     PACKER_PLUGIN_PATH: ".packer.d/plugins"
   script:
-    - "packer build -force -on-error=ask -var-file=\"$PACKERVAR_VSPHERE_LOCAL\" -var-file=\"$PACKERVAR_BUILDUSER_CRED\" -var-file=\"$PACKERVAR_ANSIBLE_CRED\" -var-file=\"$CONFIG_PATH/proxy.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/common.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/$BUILD_VARS\" ${EXTRA_VAR_FILES} ${BUILD_ONLY} \"$INPUT_PATH\""
+    - "cat $PACKERVAR_VSPHERE_LOCAL > vsphere.pkrvars.hcl"
+    - "cat $PACKERVAR_BUILDUSER_CRED > build.pkrvars.hcl"
+    - "cat $PACKERVAR_ANSIBLE_CRED > ansible.pkrvars.hcl"
+    - "packer build -force -on-error=ask -var-file=\"vsphere.pkrvars.hcl\" -var-file=\"build.pkrvars.hcl\" -var-file=\"ansible.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/proxy.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/common.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/$BUILD_VARS\" ${EXTRA_VAR_FILES} ${BUILD_ONLY} \"$INPUT_PATH\""
   when: manual
 
 ##############################################################################
