@@ -18,7 +18,6 @@
 
 stages:
   - build
-  - test
   - deploy
 
 ##############################################################################
@@ -67,33 +66,16 @@ build_runner:
 
 ##############################################################################
 
-.packer-test:
-  stage: test
+.packer-build:
   image: $IMAGE
   tags:
     - docker
-  variables:
-    PACKER_PLUGIN_PATH: ".packer.d/plugins"
-  script:
-    - "packer init \"$INPUT_PATH\""
+  before_script:
     - "cat $PACKERVAR_VSPHERE_LOCAL > vsphere.pkrvars.hcl"
     - "cat $PACKERVAR_BUILDUSER_CRED > build.pkrvars.hcl"
     - "cat $PACKERVAR_ANSIBLE_CRED > ansible.pkrvars.hcl"
+    - "packer init \"$INPUT_PATH\""
     - "packer validate -var-file=\"vsphere.pkrvars.hcl\" -var-file=\"build.pkrvars.hcl\" -var-file=\"ansible.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/proxy.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/common.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/$BUILD_VARS\" ${EXTRA_VAR_FILES} \"$INPUT_PATH\""
-  artifacts:
-    paths:
-      - ".packer.d/plugins"
-
-
-##############################################################################
-
-.packer-build:
-  stage: deploy
-  image: $IMAGE
-  tags:
-    - docker
-  variables:
-    PACKER_PLUGIN_PATH: ".packer.d/plugins"
   script:
     - "cat $PACKERVAR_VSPHERE_LOCAL > vsphere.pkrvars.hcl"
     - "cat $PACKERVAR_BUILDUSER_CRED > build.pkrvars.hcl"
@@ -149,8 +131,8 @@ build_runner:
 ##############################################################################
 
 Ubuntu-Server-22.04-LTS:
+  stage: deploy
   extends: 
-    - .packer-test
     - .packer-build
   variables:
     INPUT_PATH: "$SCRIPT_PATH/builds/linux/ubuntu/22-04-lts/"
@@ -160,8 +142,8 @@ Ubuntu-Server-22.04-LTS:
 ##############################################################################
 
 Ubuntu-Server-22.04-LTS-k8snode:
+  stage: deploy
   extends: 
-    - .packer-test
     - .packer-build
   variables:
     INPUT_PATH: "$SCRIPT_PATH/builds/linux/ubuntu/22-04-k8snode/"
