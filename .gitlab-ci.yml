@@ -71,15 +71,12 @@ build_runner:
   tags:
     - docker
   before_script:
-    - "cat $PACKERVAR_VSPHERE_LOCAL > vsphere.pkrvars.hcl"
-    - "cat $PACKERVAR_BUILDUSER_CRED > build.pkrvars.hcl"
-    - "cat $PACKERVAR_ANSIBLE_CRED > ansible.pkrvars.hcl"
+    - "cat $PACKERVAR_VSPHERE_LOCAL_B64 | base64 -d > vsphere.pkrvars.hcl"
+    - "cat $PACKERVAR_BUILDUSER_CRED_B64 | base64 -d > build.pkrvars.hcl"
+    - "cat $PACKERVAR_ANSIBLE_CRED_B64 | base64 -d > ansible.pkrvars.hcl"
     - "packer init \"$INPUT_PATH\""
     - "packer validate -var-file=\"vsphere.pkrvars.hcl\" -var-file=\"build.pkrvars.hcl\" -var-file=\"ansible.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/proxy.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/common.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/$BUILD_VARS\" ${EXTRA_VAR_FILES} \"$INPUT_PATH\""
   script:
-    - "cat $PACKERVAR_VSPHERE_LOCAL > vsphere.pkrvars.hcl"
-    - "cat $PACKERVAR_BUILDUSER_CRED > build.pkrvars.hcl"
-    - "cat $PACKERVAR_ANSIBLE_CRED > ansible.pkrvars.hcl"
     - "packer build -force -on-error=ask -var-file=\"vsphere.pkrvars.hcl\" -var-file=\"build.pkrvars.hcl\" -var-file=\"ansible.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/proxy.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/common.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/$BUILD_VARS\" ${EXTRA_VAR_FILES} ${BUILD_ONLY} \"$INPUT_PATH\""
   when: manual
 

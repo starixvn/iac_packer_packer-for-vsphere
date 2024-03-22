@@ -46,4 +46,4 @@ communicator_port    = 22
 communicator_timeout = "30m"
 
 // Build Template Settings
-from_template = "linux-ubuntu-22.04-lts-main"
+from_template = "ubuntu-22.04-lts-base"
