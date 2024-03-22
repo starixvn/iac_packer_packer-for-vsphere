@@ -17,7 +17,6 @@
 ##############################################################################
 
 stages:
-  - auth
   - build
   - test
   - deploy
@@ -49,6 +48,7 @@ variables:
     - "docker login -u $REGISTRY_USER -p $REGISTRY_PASS $REGISTRY_URL"
 
 .registry_auth:
+  stage: test
   script:
     - !reference [.general-script, docker-login]
 
