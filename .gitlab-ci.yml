@@ -48,7 +48,7 @@ variables:
     - "docker login -u $REGISTRY_USER -p $REGISTRY_PASS $REGISTRY_URL"
 
 before_script:
-    - !reference [.general-script, docker-login]
+  - !reference [.general-script, docker-login]
 
 build_runner:
   stage: build
