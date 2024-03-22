@@ -43,13 +43,17 @@ variables:
 
 
 
+.general-script:
+  docker-login:
+    - "docker login -u $REGISTRY_USER -p $REGISTRY_PASS $REGISTRY_URL"
+
+
 build_runner:
   stage: build
   tags:
     - docker
-  before_script:
-    - "docker login -u $REGISTRY_USER -p $REGISTRY_PASS $REGISTRY_URL"
   script:
+    - !reference [.general-script, docker-login]
     - "docker build --no-cache --build-arg BASE_IMAGE=\"$BASE_IMAGE\" -f Dockerfile -t $IMAGE ."
     - "docker push $IMAGE"
     - "docker logout $REGISTRY_URL"
@@ -70,6 +74,7 @@ build_runner:
   variables:
     PACKER_PLUGIN_PATH: ".packer.d/plugins"
   script:
+    - !reference [.general-script, docker-login]
     - "packer init \"$INPUT_PATH\""
     - "packer validate -var-file=\"$PACKERVAR_VSPHERE_LOCAL\" -var-file=\"$PACKERVAR_BUILDUSER_CRED\" -var-file=\"$PACKERVAR_ANSIBLE_CRED\" -var-file=\"$CONFIG_PATH/proxy.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/common.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/$BUILD_VARS\" ${EXTRA_VAR_FILES} \"$INPUT_PATH\""
   artifacts:
@@ -86,6 +91,7 @@ build_runner:
   variables:
     PACKER_PLUGIN_PATH: ".packer.d/plugins"
   script:
+    - !reference [.general-script, docker-login]
     - "packer build -force -on-error=ask -var-file=\"$PACKERVAR_VSPHERE_LOCAL\" -var-file=\"$PACKERVAR_BUILDUSER_CRED\" -var-file=\"$PACKERVAR_ANSIBLE_CRED\" -var-file=\"$CONFIG_PATH/proxy.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/common.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/$BUILD_VARS\" ${EXTRA_VAR_FILES} ${BUILD_ONLY} \"$INPUT_PATH\""
   when: manual
 
