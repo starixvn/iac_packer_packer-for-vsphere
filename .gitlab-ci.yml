@@ -31,26 +31,20 @@ variables:
   EXTRA_VAR_FILES: ""
   BUILD_ONLY: ""
 
-  BASE_IMAGE: alpine:3.18
-  IMAGE_NAME: nexops/runner/packer-ansible
-  IMAGE_TAG: alpine3.18
-  DOCKER_REG_URL: hub.lumigame.com
-  IMAGE: ${DOCKER_REG_URL}/${IMAGE_NAME}:${IMAGE_TAG}
-
   REGISTRY_USER: "$DOCKER_REG_LOCAL_USERNAME"
   REGISTRY_PASS: "$DOCKER_REG_LOCAL_PASSWORD"
   REGISTRY_URL: "$DOCKER_REG_LOCAL_URL"
+
+  BASE_IMAGE: alpine:3.18
+  IMAGE_NAME: base/packer-ansible
+  IMAGE_TAG: alpine3.18
+  IMAGE: ${REGISTRY_URL}/${IMAGE_NAME}:${IMAGE_TAG}
 
 ##############################################################################
 
 .general-script:
   docker-login:
     - "docker login -u $REGISTRY_USER -p $REGISTRY_PASS $REGISTRY_URL"
-
-.registry_auth:
-  stage: test
-  script:
-    - !reference [.general-script, docker-login]
 
 ##############################################################################
 
@@ -150,7 +144,6 @@ build_runner:
 
 Ubuntu-Server-22.04-LTS:
   extends: 
-    - .registry_auth
     - .packer-test
     - .packer-build
   variables:
@@ -162,7 +155,6 @@ Ubuntu-Server-22.04-LTS:
 
 Ubuntu-Server-22.04-LTS-k8snode:
   extends: 
-    - .registry_auth
     - .packer-test
     - .packer-build
   variables:

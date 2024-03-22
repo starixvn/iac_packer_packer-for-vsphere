@@ -37,6 +37,3 @@ RUN rm -f packer_${PACKER_VERSION}_linux_amd64.zip
 
 RUN adduser -D builder
 USER builder
-
-
-# ENTRYPOINT ["/bin/packer"]
