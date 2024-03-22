@@ -175,10 +175,12 @@ build {
     ]
     extra_arguments = [
       "--become",
-      "--extra-vars", "local_release_dir='/kubespray_cache/'",
-      "--extra-vars", "download_cache_dir='/kubespray_cache/'",
+      "--scp-extra-args", "'-O'",
+      "--extra-vars", "local_release_dir='/kubespray_cache/releases'",
+      "--extra-vars", "download_cache_dir='/kubespray_cache/kubespray_cache'",
       "--extra-vars", "kube_version='v1.27.5'",
       "--tags", "facts,preinstall,download,container-engine",
+      "-vvvv"
     ]
   }
 

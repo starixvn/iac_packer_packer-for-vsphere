@@ -46,6 +46,7 @@ terraform.rc
 # config/
 config/vsphere.pkrvars.hcl
 config/build.pkrvars.hcl
+config/ansible.pkrvars.hcl
 
 # Artifacts
 ## Ignore artifacts directory.
