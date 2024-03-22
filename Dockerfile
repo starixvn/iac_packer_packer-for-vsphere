@@ -2,7 +2,7 @@ FROM alpine:3.18
 
 LABEL maintainer="NexOps"
 LABEL anisble.version="core 2.14.5"
-LABEL python3.version="3.11.8"
+LABEL python.version="3.11.8"
 LABEL alpine.version="3.18"
 LABEL packer.version="v1.10.2"
 
