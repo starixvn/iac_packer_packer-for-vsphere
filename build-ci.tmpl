@@ -52,6 +52,7 @@ variables:
   rules:
     - if: $CI_COMMIT_REF_NAME == "env/local-testlab"
       PACKERVAR_VSPHERE: ${PACKERVAR_VSPHERE_LOCAL_B64}
+    - PACKERVAR_VSPHERE: ""
 
 
 ##############################################################################
