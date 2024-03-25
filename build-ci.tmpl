@@ -16,26 +16,70 @@
 ##
 ##############################################################################
 
+stages:
+  - build
+  - deploy
+
+##############################################################################
+
 variables:
-    SCRIPT_PATH: "${CI_PROJECT_DIR}"
-    CONFIG_PATH: "${CI_PROJECT_DIR}/config"
-    INPUT_PATH: ""
-    BUILD_VARS: ""
-    EXTRA_VAR_FILES: ""
-    BUILD_ONLY: ""
+  SCRIPT_PATH: "${CI_PROJECT_DIR}"
+  CONFIG_PATH: "${CI_PROJECT_DIR}/config"
+  INPUT_PATH: ""
+  BUILD_VARS: ""
+  EXTRA_VAR_FILES: ""
+  BUILD_ONLY: ""
+
+  GIT_SUBMODULE_STRATEGY: recursive
+  GIT_SUBMODULE_FORCE_HTTPS: "true"
+
+  REGISTRY_USER: "$DOCKER_REG_LOCAL_USERNAME"
+  REGISTRY_PASS: "$DOCKER_REG_LOCAL_PASSWORD"
+  REGISTRY_URL: "$DOCKER_REG_LOCAL_URL"
+
+  BASE_IMAGE: alpine:3.18
+  IMAGE_NAME: base/packer-ansible
+  IMAGE_TAG: alpine3.18
+  IMAGE: ${REGISTRY_URL}/${IMAGE_NAME}:${IMAGE_TAG}
+
+##############################################################################
+
+.general-script:
+  docker-login:
+    - "docker login -u $REGISTRY_USER -p $REGISTRY_PASS $REGISTRY_URL"
+
+##############################################################################
+
+build_runner:
+  stage: build
+  tags:
+    - docker
+  before_script:
+    - !reference [.general-script, docker-login]
+  script:
+    - "docker build --no-cache --build-arg BASE_IMAGE=\"$BASE_IMAGE\" -f Dockerfile -t $IMAGE ."
+    - "docker push $IMAGE"
+    - "docker logout $REGISTRY_URL"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+      changes: 
+        - Dockerfile
 
 ##############################################################################
 
 .packer-build:
-    stage: build
-    #tags: 
-    #    - packer
-    before_script:
-        - "packer init \"$INPUT_PATH\""
-        - "packer validate -var-file=\"$CONFIG_PATH/vsphere.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/build.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/ansible.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/proxy.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/common.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/$BUILD_VARS\" ${EXTRA_VAR_FILES} \"$INPUT_PATH\""
-    script:
-        - "packer build -force -on-error=ask -var-file=\"$CONFIG_PATH/vsphere.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/build.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/ansible.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/proxy.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/common.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/$BUILD_VARS\" ${EXTRA_VAR_FILES} ${BUILD_ONLY} \"$INPUT_PATH\""
-    when: manual
+  stage: deploy
+  #tags: 
+  #    - packer
+  before_script:
+  - "cat $PACKERVAR_VSPHERE_LOCAL_B64 | base64 -d > vsphere.pkrvars.hcl"
+  - "cat $PACKERVAR_BUILDUSER_CRED_B64 | base64 -d > build.pkrvars.hcl"
+  - "cat $PACKERVAR_ANSIBLE_CRED_B64 | base64 -d > ansible.pkrvars.hcl"
+    - "packer init \"$INPUT_PATH\""
+    - "packer validate -var-file=\"vsphere.pkrvars.hcl\" -var-file=\"build.pkrvars.hcl\" -var-file=\"ansible.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/proxy.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/common.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/$BUILD_VARS\" ${EXTRA_VAR_FILES} \"$INPUT_PATH\""
+  script:
+    - "packer build -force -on-error=ask -var-file=\"vsphere.pkrvars.hcl\" -var-file=\"build.pkrvars.hcl\" -var-file=\"ansible.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/proxy.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/common.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/$BUILD_VARS\" ${EXTRA_VAR_FILES} ${BUILD_ONLY} \"$INPUT_PATH\""
+  when: manual
 
 ##############################################################################
 
@@ -43,15 +87,15 @@ variables:
 {{ range $submenu := $menu.submenu -}}
 
 {{ $submenu.entry | strings.ReplaceAll " (cloud-init)" "" | strings.ReplaceAll " " "-" | strings.ReplaceAll "---" "-" }}:
-    extends: .packer-build
-    variables:
-        INPUT_PATH: "$SCRIPT_PATH/{{ $submenu.build.path }}"
-        BUILD_VARS: "{{ $submenu.build.path | strings.ReplaceAll "builds" "" | strings.TrimPrefix "/" | strings.TrimSuffix "/" | strings.ReplaceAll "/" "-" }}.pkrvars.hcl"
+  extends: .packer-build
+  variables:
+    INPUT_PATH: "$SCRIPT_PATH/{{ $submenu.build.path }}"
+    BUILD_VARS: "{{ $submenu.build.path | strings.ReplaceAll "builds" "" | strings.TrimPrefix "/" | strings.TrimSuffix "/" | strings.ReplaceAll "/" "-" }}.pkrvars.hcl"
 {{- if (coll.Has $submenu.build "only") }}
-        BUILD_ONLY: "--only {{ join $submenu.build.only "," }}"
+    BUILD_ONLY: "--only {{ join $submenu.build.only "," }}"
 {{- end -}}
 {{- if (coll.Has $submenu.build "var_files") }}
-        EXTRA_VAR_FILES: "{{ range $index, $value := $submenu.build.var_files }}{{if $index}} {{end}}-var-file=$CONFIG_PATH/{{ $value }}{{ end }}"
+    EXTRA_VAR_FILES: "{{ range $index, $value := $submenu.build.var_files }}{{if $index}} {{end}}-var-file=$CONFIG_PATH/{{ $value }}{{ end }}"
 {{- end }}
 
 ##############################################################################
