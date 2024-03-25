@@ -13,6 +13,10 @@
 ## then run the following command to re-create the .gitlab-ci.yml file:
 ##
 ##     gomplate -c build.yaml -f build-ci.tmpl -o .gitlab-ci.yml
+## 
+## OR run gomplate with docker:
+##
+##     docker run --rm -v $(pwd):/workspace -w /workspace hairyhenderson/gomplate:stable -c build.yaml -f build-ci.tmpl -o .gitlab-ci.yml
 ##
 ##############################################################################
 
@@ -69,6 +73,7 @@ build_runner:
 
 .packer-build:
   stage: deploy
+  image: $IMAGE
   tags: 
     - docker
   before_script:
