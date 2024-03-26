@@ -46,12 +46,11 @@ variables:
   IMAGE_TAG: alpine3.18
   IMAGE: "${REGISTRY_URL}/${IMAGE_NAME}:${IMAGE_TAG}"
 
-  PACKERVAR_BUILDUSER_CRED: "${PACKERVAR_BUILDUSER_CRED_B64}"
-  PACKERVAR_ANSIBLE_CRED: "${PACKERVAR_ANSIBLE_CRED_B64}"
-
 ##############################################################################
 
 .general-script:
+  set-build-env:
+    - "if [[ $CI_COMMIT_BRANCH == 'env/local-testlab' ]]; then cat $PACKERVAR_VSPHERE_LOCAL_B64 | base64 -d > ansible.pkrvars.hcl"
   docker-login:
     - "docker login -u $REGISTRY_USER -p $REGISTRY_PASS $REGISTRY_URL"
 
@@ -80,9 +79,9 @@ build_runner:
   tags: 
     - docker
   before_script:
-    - "echo $PACKERVAR_VSPHERE | base64 -d > vsphere.pkrvars.hcl"
-    - "echo $PACKERVAR_BUILDUSER_CRED | base64 -d > build.pkrvars.hcl"
-    - "echo $PACKERVAR_ANSIBLE_CRED | base64 -d > ansible.pkrvars.hcl"
+    - !reference [.general-script, set-build-env]
+    - "cat $PACKERVAR_BUILDUSER_CRED_B64 | base64 -d > build.pkrvars.hcl"
+    - "cat $PACKERVAR_ANSIBLE_CRED_B64 | base64 -d > ansible.pkrvars.hcl"
     - "packer init \"$INPUT_PATH\""
     - "packer validate -var-file=\"vsphere.pkrvars.hcl\" -var-file=\"build.pkrvars.hcl\" -var-file=\"ansible.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/proxy.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/common.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/$BUILD_VARS\" ${EXTRA_VAR_FILES} \"$INPUT_PATH\""
   script:
@@ -98,10 +97,8 @@ Ubuntu-Server-22.04-LTS:
     BUILD_VARS: "linux-ubuntu-22-04-lts.pkrvars.hcl"
     EXTRA_VAR_FILES: "-var-file=$CONFIG_PATH/network.pkrvars.hcl -var-file=$CONFIG_PATH/linux-storage.pkrvars.hcl"
   rules:
-    - if: '$CI_COMMIT_BRANCH == "env/local-testlab"'
-      variables:
-        PACKERVAR_VSPHERE: "${PACKERVAR_VSPHERE_LOCAL_B64}"
-    - when: never
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: never
 
 ##############################################################################
 
@@ -112,10 +109,8 @@ Ubuntu-Server-22.04-K8SNode-(build-from-VM-template):
     BUILD_VARS: "linux-ubuntu-22-04-k8snode.pkrvars.hcl"
     EXTRA_VAR_FILES: "-var-file=$CONFIG_PATH/network.pkrvars.hcl -var-file=$CONFIG_PATH/linux-storage.pkrvars.hcl"
   rules:
-    - if: '$CI_COMMIT_BRANCH == "env/local-testlab"'
-      variables:
-        PACKERVAR_VSPHERE: "${PACKERVAR_VSPHERE_LOCAL_B64}"
-    - when: never
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: never
 
 ##############################################################################
 

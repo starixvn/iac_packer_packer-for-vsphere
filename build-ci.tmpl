@@ -46,12 +46,11 @@ variables:
   IMAGE_TAG: alpine3.18
   IMAGE: "${REGISTRY_URL}/${IMAGE_NAME}:${IMAGE_TAG}"
 
-  PACKERVAR_BUILDUSER_CRED: "${PACKERVAR_BUILDUSER_CRED_B64}"
-  PACKERVAR_ANSIBLE_CRED: "${PACKERVAR_ANSIBLE_CRED_B64}"
-
 ##############################################################################
 
 .general-script:
+  set-build-env:
+    - "if [[ $CI_COMMIT_BRANCH == 'env/local-testlab' ]]; then cat $PACKERVAR_VSPHERE_LOCAL_B64 | base64 -d > ansible.pkrvars.hcl"
   docker-login:
     - "docker login -u $REGISTRY_USER -p $REGISTRY_PASS $REGISTRY_URL"
 
@@ -80,9 +79,9 @@ build_runner:
   tags: 
     - docker
   before_script:
-    - "echo $PACKERVAR_VSPHERE | base64 -d > vsphere.pkrvars.hcl"
-    - "echo $PACKERVAR_BUILDUSER_CRED | base64 -d > build.pkrvars.hcl"
-    - "echo $PACKERVAR_ANSIBLE_CRED | base64 -d > ansible.pkrvars.hcl"
+    - !reference [.general-script, set-build-env]
+    - "cat $PACKERVAR_BUILDUSER_CRED_B64 | base64 -d > build.pkrvars.hcl"
+    - "cat $PACKERVAR_ANSIBLE_CRED_B64 | base64 -d > ansible.pkrvars.hcl"
     - "packer init \"$INPUT_PATH\""
     - "packer validate -var-file=\"vsphere.pkrvars.hcl\" -var-file=\"build.pkrvars.hcl\" -var-file=\"ansible.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/proxy.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/common.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/$BUILD_VARS\" ${EXTRA_VAR_FILES} \"$INPUT_PATH\""
   script:
@@ -106,10 +105,8 @@ build_runner:
     EXTRA_VAR_FILES: "{{ range $index, $value := $submenu.build.var_files }}{{if $index}} {{end}}-var-file=$CONFIG_PATH/{{ $value }}{{ end }}"
 {{- end }}
   rules:
-    - if: '$CI_COMMIT_BRANCH == "env/local-testlab"'
-      variables:
-        PACKERVAR_VSPHERE: "${PACKERVAR_VSPHERE_LOCAL_B64}"
-    - when: never
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: never
 
 ##############################################################################
 
