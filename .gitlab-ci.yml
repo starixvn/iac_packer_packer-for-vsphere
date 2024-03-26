@@ -80,9 +80,9 @@ build_runner:
   tags: 
     - docker
   before_script:
-    - "cat $PACKERVAR_VSPHERE | base64 -d > vsphere.pkrvars.hcl"
-    - "cat $PACKERVAR_BUILDUSER_CRED | base64 -d > build.pkrvars.hcl"
-    - "cat $PACKERVAR_ANSIBLE_CRED | base64 -d > ansible.pkrvars.hcl"
+    - "echo $PACKERVAR_VSPHERE | base64 -d > vsphere.pkrvars.hcl"
+    - "echo $PACKERVAR_BUILDUSER_CRED | base64 -d > build.pkrvars.hcl"
+    - "echo $PACKERVAR_ANSIBLE_CRED | base64 -d > ansible.pkrvars.hcl"
     - "packer init \"$INPUT_PATH\""
     - "packer validate -var-file=\"vsphere.pkrvars.hcl\" -var-file=\"build.pkrvars.hcl\" -var-file=\"ansible.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/proxy.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/common.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/$BUILD_VARS\" ${EXTRA_VAR_FILES} \"$INPUT_PATH\""
   script:
