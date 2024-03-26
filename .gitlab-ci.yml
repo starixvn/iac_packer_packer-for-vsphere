@@ -52,9 +52,9 @@ variables:
   set-build-env:
     - if [[ $CI_COMMIT_BRANCH == 'env/local-testlab' ]]; then 
         cat $PACKERVAR_VSPHERE_LOCAL_B64 | base64 -d > vsphere.pkrvars.hcl;
-      else;
+      else; 
         cat $PACKERVAR_VSPHERE_LOCAL_B64 | base64 -d > vsphere.pkrvars.hcl;
-      fi;
+      fi
 
   docker-login:
     - "docker login -u $REGISTRY_USER -p $REGISTRY_PASS $REGISTRY_URL"
