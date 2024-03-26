@@ -50,9 +50,7 @@ variables:
 
 .general-script:
   set-build-env:
-    - "if [[ $CI_COMMIT_BRANCH == 'env/local-testlab' ]]; then cat $PACKERVAR_VSPHERE_LOCAL_B64 | base64 -d > ansible.pkrvars.hcl
-      fi"
-
+    - "if [[ $CI_COMMIT_BRANCH == 'env/local-testlab' ]]; then cat $PACKERVAR_VSPHERE_LOCAL_B64 | base64 -d > ansible.pkrvars.hcl; fi"
   docker-login:
     - "docker login -u $REGISTRY_USER -p $REGISTRY_PASS $REGISTRY_URL"
 
