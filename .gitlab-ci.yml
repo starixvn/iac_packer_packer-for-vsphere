@@ -102,6 +102,7 @@ Ubuntu-Server-22.04-LTS:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       when: never
+    - when: always
 
 ##############################################################################
 
@@ -114,6 +115,7 @@ Ubuntu-Server-22.04-K8SNode-(build-from-VM-template):
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       when: never
+    - when: always
 
 ##############################################################################
 
