@@ -118,7 +118,8 @@ Ubuntu-Server-22.04-K8SNode-(build-from-VM-template):
     - if: '$CI_COMMIT_BRANCH == "env/local-testlab"'
       variables:
         PACKERVAR_VSPHERE: "${PACKERVAR_VSPHERE_LOCAL_B64}"
-    - when: never
+    - variables:
+        PACKERVAR_VSPHERE: "ZZZ=="
 
 ##############################################################################
 
