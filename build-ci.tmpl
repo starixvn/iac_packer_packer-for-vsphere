@@ -89,7 +89,10 @@ build_runner:
     - "packer validate -var-file=\"vsphere.pkrvars.hcl\" -var-file=\"build.pkrvars.hcl\" -var-file=\"ansible.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/proxy.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/common.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/$BUILD_VARS\" ${EXTRA_VAR_FILES} \"$INPUT_PATH\""
   script:
     - "packer build -force -on-error=ask -var-file=\"vsphere.pkrvars.hcl\" -var-file=\"build.pkrvars.hcl\" -var-file=\"ansible.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/proxy.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/common.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/$BUILD_VARS\" ${EXTRA_VAR_FILES} ${BUILD_ONLY} \"$INPUT_PATH\""
-  when: manual
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: never
+    - when: manual
 
 ##############################################################################
 
@@ -107,10 +110,6 @@ build_runner:
 {{- if (coll.Has $submenu.build "var_files") }}
     EXTRA_VAR_FILES: "{{ range $index, $value := $submenu.build.var_files }}{{if $index}} {{end}}-var-file=$CONFIG_PATH/{{ $value }}{{ end }}"
 {{- end }}
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-      when: never
-    - when: always
 
 ##############################################################################
 

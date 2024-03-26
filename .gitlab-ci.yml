@@ -89,7 +89,10 @@ build_runner:
     - "packer validate -var-file=\"vsphere.pkrvars.hcl\" -var-file=\"build.pkrvars.hcl\" -var-file=\"ansible.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/proxy.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/common.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/$BUILD_VARS\" ${EXTRA_VAR_FILES} \"$INPUT_PATH\""
   script:
     - "packer build -force -on-error=ask -var-file=\"vsphere.pkrvars.hcl\" -var-file=\"build.pkrvars.hcl\" -var-file=\"ansible.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/proxy.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/common.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/$BUILD_VARS\" ${EXTRA_VAR_FILES} ${BUILD_ONLY} \"$INPUT_PATH\""
-  when: manual
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: never
+    - when: manual
 
 ##############################################################################
 
@@ -99,10 +102,6 @@ Ubuntu-Server-22.04-LTS:
     INPUT_PATH: "$SCRIPT_PATH/builds/linux/ubuntu/22-04-lts/"
     BUILD_VARS: "linux-ubuntu-22-04-lts.pkrvars.hcl"
     EXTRA_VAR_FILES: "-var-file=$CONFIG_PATH/network.pkrvars.hcl -var-file=$CONFIG_PATH/linux-storage.pkrvars.hcl"
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-      when: never
-    - when: always
 
 ##############################################################################
 
@@ -112,10 +111,6 @@ Ubuntu-Server-22.04-K8SNode-(build-from-VM-template):
     INPUT_PATH: "$SCRIPT_PATH/builds/linux/ubuntu/22-04-k8snode/"
     BUILD_VARS: "linux-ubuntu-22-04-k8snode.pkrvars.hcl"
     EXTRA_VAR_FILES: "-var-file=$CONFIG_PATH/network.pkrvars.hcl -var-file=$CONFIG_PATH/linux-storage.pkrvars.hcl"
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-      when: never
-    - when: always
 
 ##############################################################################
 
