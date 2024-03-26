@@ -80,9 +80,9 @@ build_runner:
   tags: 
     - docker
   before_script:
-    - "cat $PACKERVAR_VSPHERE"
+    - "cat ${PACKERVAR_VSPHERE}"
     - "cat $PACKERVAR_VSPHERE | base64 -d > vsphere.pkrvars.hcl"
-    - "cat $PACKERVAR_BUILDUSER_CRED"
+    - "cat ${PACKERVAR_BUILDUSER_CRED}"
     - "cat $PACKERVAR_BUILDUSER_CRED | base64 -d > build.pkrvars.hcl"
     - "cat $PACKERVAR_ANSIBLE_CRED"
     - "cat $PACKERVAR_ANSIBLE_CRED | base64 -d > ansible.pkrvars.hcl"
