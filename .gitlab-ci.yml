@@ -49,11 +49,15 @@ variables:
   PACKERVAR_BUILDUSER_CRED: "${PACKERVAR_BUILDUSER_CRED_B64}"
   PACKERVAR_ANSIBLE_CRED: "${PACKERVAR_ANSIBLE_CRED_B64}"
 
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == "env/local-testlab"'
-      PACKERVAR_VSPHERE: "${PACKERVAR_VSPHERE_LOCAL_B64}"
-    - PACKERVAR_VSPHERE: "dGVzdA=="
+##############################################################################
 
+.set_build_env:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "env/local-testlab"'
+      variables:
+        PACKERVAR_VSPHERE: "${PACKERVAR_VSPHERE_LOCAL_B64}"
+    - variabels:
+        PACKERVAR_VSPHERE: "dGVzdA=="
 
 ##############################################################################
 
@@ -98,7 +102,7 @@ build_runner:
 ##############################################################################
 
 Ubuntu-Server-22.04-LTS:
-  extends: .packer-build
+  extends: [.set_build_env, .packer-build]
   variables:
     INPUT_PATH: "$SCRIPT_PATH/builds/linux/ubuntu/22-04-lts/"
     BUILD_VARS: "linux-ubuntu-22-04-lts.pkrvars.hcl"
@@ -107,7 +111,7 @@ Ubuntu-Server-22.04-LTS:
 ##############################################################################
 
 Ubuntu-Server-22.04-K8SNode-(build-from-VM-template):
-  extends: .packer-build
+  extends: [.set_build_env, .packer-build]
   variables:
     INPUT_PATH: "$SCRIPT_PATH/builds/linux/ubuntu/22-04-k8snode/"
     BUILD_VARS: "linux-ubuntu-22-04-k8snode.pkrvars.hcl"

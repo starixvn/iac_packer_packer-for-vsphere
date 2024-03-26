@@ -49,11 +49,15 @@ variables:
   PACKERVAR_BUILDUSER_CRED: "${PACKERVAR_BUILDUSER_CRED_B64}"
   PACKERVAR_ANSIBLE_CRED: "${PACKERVAR_ANSIBLE_CRED_B64}"
 
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == "env/local-testlab"'
-      PACKERVAR_VSPHERE: "${PACKERVAR_VSPHERE_LOCAL_B64}"
-    - PACKERVAR_VSPHERE: "dGVzdA=="
+##############################################################################
 
+.set_build_env:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "env/local-testlab"'
+      variables:
+        PACKERVAR_VSPHERE: "${PACKERVAR_VSPHERE_LOCAL_B64}"
+    - variabels:
+        PACKERVAR_VSPHERE: "dGVzdA=="
 
 ##############################################################################
 
@@ -101,7 +105,7 @@ build_runner:
 {{ range $submenu := $menu.submenu -}}
 
 {{ $submenu.entry | strings.ReplaceAll " (cloud-init)" "" | strings.ReplaceAll " " "-" | strings.ReplaceAll "---" "-" }}:
-  extends: .packer-build
+  extends: [.set_build_env, .packer-build]
   variables:
     INPUT_PATH: "$SCRIPT_PATH/{{ $submenu.build.path }}"
     BUILD_VARS: "{{ $submenu.build.path | strings.ReplaceAll "builds" "" | strings.TrimPrefix "/" | strings.TrimSuffix "/" | strings.ReplaceAll "/" "-" }}.pkrvars.hcl"
