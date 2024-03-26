@@ -50,10 +50,9 @@ variables:
 
 .general-script:
   set-build-env:
-    - if [[ $CI_COMMIT_BRANCH == 'env/local-testlab' ]]; then 
+    - if [[ $CI_COMMIT_BRANCH == env/local-testlab ]]; then 
         cat $PACKERVAR_VSPHERE_LOCAL_B64 | base64 -d > vsphere.pkrvars.hcl;
-      else; 
-        cat $PACKERVAR_VSPHERE_LOCAL_B64 | base64 -d > vsphere.pkrvars.hcl;
+      else cat $PACKERVAR_VSPHERE_LOCAL_B64 | base64 -d > vsphere.pkrvars.hcl;
       fi
 
   docker-login:
