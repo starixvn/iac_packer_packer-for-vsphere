@@ -100,7 +100,7 @@ Ubuntu-Server-22.04-LTS:
     BUILD_VARS: "linux-ubuntu-22-04-lts.pkrvars.hcl"
     EXTRA_VAR_FILES: "-var-file=$CONFIG_PATH/network.pkrvars.hcl -var-file=$CONFIG_PATH/linux-storage.pkrvars.hcl"
   rules:
-    - if: $CI_COMMIT_BRANCH == main
+    - if: $CI_COMMIT_BRANCH == "main"
       when: never
 
 ##############################################################################
@@ -112,7 +112,7 @@ Ubuntu-Server-22.04-K8SNode-(build-from-VM-template):
     BUILD_VARS: "linux-ubuntu-22-04-k8snode.pkrvars.hcl"
     EXTRA_VAR_FILES: "-var-file=$CONFIG_PATH/network.pkrvars.hcl -var-file=$CONFIG_PATH/linux-storage.pkrvars.hcl"
   rules:
-    - if: $CI_COMMIT_BRANCH == main
+    - if: $CI_COMMIT_BRANCH == "main"
       when: never
 
 ##############################################################################

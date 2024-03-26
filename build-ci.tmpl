@@ -108,7 +108,7 @@ build_runner:
     EXTRA_VAR_FILES: "{{ range $index, $value := $submenu.build.var_files }}{{if $index}} {{end}}-var-file=$CONFIG_PATH/{{ $value }}{{ end }}"
 {{- end }}
   rules:
-    - if: $CI_COMMIT_BRANCH == main
+    - if: $CI_COMMIT_BRANCH == "main"
       when: never
 
 ##############################################################################
