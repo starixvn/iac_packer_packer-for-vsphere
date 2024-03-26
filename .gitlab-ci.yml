@@ -119,7 +119,7 @@ Ubuntu-Server-22.04-K8SNode-(build-from-VM-template):
       variables:
         PACKERVAR_VSPHERE: "${PACKERVAR_VSPHERE_LOCAL_B64}"
     - variables:
-        PACKERVAR_VSPHERE: "ZZZ=="
+        PACKERVAR_VSPHERE: "Dockerfile"
 
 ##############################################################################
 
