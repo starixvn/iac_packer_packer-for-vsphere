@@ -92,7 +92,7 @@ build_runner:
 ##############################################################################
 
 Ubuntu-Server-22.04-LTS:
-  extends: [.set_build_env, .packer-build]
+  extends: [.packer-build]
   variables:
     INPUT_PATH: "$SCRIPT_PATH/builds/linux/ubuntu/22-04-lts/"
     BUILD_VARS: "linux-ubuntu-22-04-lts.pkrvars.hcl"
@@ -106,7 +106,7 @@ Ubuntu-Server-22.04-LTS:
 ##############################################################################
 
 Ubuntu-Server-22.04-K8SNode-(build-from-VM-template):
-  extends: [.set_build_env, .packer-build]
+  extends: [.packer-build]
   variables:
     INPUT_PATH: "$SCRIPT_PATH/builds/linux/ubuntu/22-04-k8snode/"
     BUILD_VARS: "linux-ubuntu-22-04-k8snode.pkrvars.hcl"

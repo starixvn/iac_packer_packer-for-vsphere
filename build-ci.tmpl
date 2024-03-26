@@ -95,7 +95,7 @@ build_runner:
 {{ range $submenu := $menu.submenu -}}
 
 {{ $submenu.entry | strings.ReplaceAll " (cloud-init)" "" | strings.ReplaceAll " " "-" | strings.ReplaceAll "---" "-" }}:
-  extends: [.set_build_env, .packer-build]
+  extends: [.packer-build]
   variables:
     INPUT_PATH: "$SCRIPT_PATH/{{ $submenu.build.path }}"
     BUILD_VARS: "{{ $submenu.build.path | strings.ReplaceAll "builds" "" | strings.TrimPrefix "/" | strings.TrimSuffix "/" | strings.ReplaceAll "/" "-" }}.pkrvars.hcl"
