@@ -50,7 +50,10 @@ variables:
 
 .general-script:
   set-build-env:
-    - "if [[ $CI_COMMIT_BRANCH == 'env/local-testlab' ]]; then cat $PACKERVAR_VSPHERE_LOCAL_B64 | base64 -d > vsphere.pkrvars.hcl; fi"
+    - if [[ $CI_COMMIT_BRANCH == 'env/local-testlab' ]]; then cat $PACKERVAR_VSPHERE_LOCAL_B64 | base64 -d > vsphere.pkrvars.hcl
+      else; $PACKERVAR_VSPHERE_LOCAL_B64 | base64 -d > vsphere.pkrvars.hcl
+      fi
+
   docker-login:
     - "docker login -u $REGISTRY_USER -p $REGISTRY_PASS $REGISTRY_URL"
 
@@ -82,7 +85,7 @@ build_runner:
     - !reference [.general-script, set-build-env]
     - "cat $PACKERVAR_BUILDUSER_CRED_B64 | base64 -d > build.pkrvars.hcl"
     - "cat $PACKERVAR_ANSIBLE_CRED_B64 | base64 -d > ansible.pkrvars.hcl"
-    - "packer init \"$INPUT_PATH\""
+    # - "packer init \"$INPUT_PATH\""
     - "packer validate -var-file=\"vsphere.pkrvars.hcl\" -var-file=\"build.pkrvars.hcl\" -var-file=\"ansible.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/proxy.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/common.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/$BUILD_VARS\" ${EXTRA_VAR_FILES} \"$INPUT_PATH\""
   script:
     - "packer build -force -on-error=ask -var-file=\"vsphere.pkrvars.hcl\" -var-file=\"build.pkrvars.hcl\" -var-file=\"ansible.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/proxy.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/common.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/$BUILD_VARS\" ${EXTRA_VAR_FILES} ${BUILD_ONLY} \"$INPUT_PATH\""
