@@ -41,9 +41,9 @@ variables:
   REGISTRY_PASS: "$DOCKER_REG_LOCAL_PASSWORD"
   REGISTRY_URL: "$DOCKER_REG_LOCAL_URL"
 
-  BASE_IMAGE: alpine:3.18
-  IMAGE_NAME: base/packer-ansible
-  IMAGE_TAG: alpine3.18
+  BASE_IMAGE: quay.io/kubespray/kubespray:v2.23.0
+  IMAGE_NAME: base/packer
+  IMAGE_TAG: v1.10.2-u2204
   IMAGE: "${REGISTRY_URL}/${IMAGE_NAME}:${IMAGE_TAG}"
 
 ##############################################################################
