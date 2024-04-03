@@ -9,3 +9,39 @@
     - users
     - configure
     - clean
+
+- become: true
+  become_method: sudo
+  debugger: never
+  gather_facts: true
+  hosts: all
+  roles:
+    - base
+  tags: base
+
+- become: true
+  become_method: sudo
+  debugger: never
+  gather_facts: true
+  hosts: all
+  roles:
+    - users
+  tags: users
+
+- become: true
+  become_method: sudo
+  debugger: never
+  gather_facts: true
+  hosts: all
+  roles:
+    - configure
+  tags: configure
+
+- become: true
+  become_method: sudo
+  debugger: never
+  gather_facts: true
+  hosts: all
+  roles:
+    - clean
+  tags: clean

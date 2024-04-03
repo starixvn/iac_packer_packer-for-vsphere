@@ -198,7 +198,7 @@ build {
       "--extra-vars", "BUILD_KEY='${var.build_key}'",
       "--extra-vars", "ANSIBLE_USERNAME=${var.ansible_username}",
       "--extra-vars", "ANSIBLE_KEY='${var.ansible_key}'",
-      "--tags", "config,clean",
+      "--tags", "config,clean"
     ]
   }
 
