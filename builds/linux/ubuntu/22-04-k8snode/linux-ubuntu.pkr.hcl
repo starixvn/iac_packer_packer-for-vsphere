@@ -183,6 +183,25 @@ build {
     ]
   }
 
+  provisioner "ansible" {
+    user                   = var.build_username
+    galaxy_file            = "${path.cwd}/ansible/linux-requirements.yml"
+    galaxy_force_with_deps = true
+    playbook_file          = "${path.cwd}/ansible/linux-playbook.yml"
+    roles_path             = "${path.cwd}/ansible/roles"
+    ansible_env_vars = [
+      "ANSIBLE_CONFIG=${path.cwd}/ansible/ansible.cfg"
+    ]
+    extra_arguments = [
+      "--extra-vars", "display_skipped_hosts=false",
+      "--extra-vars", "BUILD_USERNAME=${var.build_username}",
+      "--extra-vars", "BUILD_KEY='${var.build_key}'",
+      "--extra-vars", "ANSIBLE_USERNAME=${var.ansible_username}",
+      "--extra-vars", "ANSIBLE_KEY='${var.ansible_key}'",
+      "--tags", "config,clean",
+    ]
+  }
+
   post-processor "manifest" {
     output     = local.manifest_output
     strip_path = true
