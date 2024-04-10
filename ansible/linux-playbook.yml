@@ -45,3 +45,13 @@
   roles:
     - clean
   tags: clean
+
+
+- become: true
+  become_method: sudo
+  debugger: never
+  gather_facts: true
+  hosts: all
+  roles:
+    - k8s
+  tags: k8s

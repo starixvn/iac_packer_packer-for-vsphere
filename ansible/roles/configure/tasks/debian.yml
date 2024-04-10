@@ -37,7 +37,7 @@
         - /etc/netplan/00-installer-config.yaml
     - lineinfile:
         path: /etc/cloud/cloud.cfg
-        line: 'disable_vmware_customization: false'
+        line: "disable_vmware_customization: false"
         create: true
     - copy:
         content: 'datasource_list: [ VMware, OVF, None ]'

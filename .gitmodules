@@ -1,3 +1,6 @@
 [submodule "kubespray"]
 	path = kubespray
 	url = git@gitlab.nexdev.net:NEXOPS/kubespray.git
+[submodule "nexops-tools-ansible"]
+	path = nexops-tools-ansible
+	url = git@gitlab.nexdev.net:iac/ansible/tools.git

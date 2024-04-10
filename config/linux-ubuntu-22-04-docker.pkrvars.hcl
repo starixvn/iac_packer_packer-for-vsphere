@@ -32,9 +32,6 @@ vm_disk_controller_type  = ["pvscsi"]
 vm_disk_thin_provisioned = true
 vm_network_card          = "vmxnet3"
 
-// Additional Package to install
-// additional_packages = ["net-tools", "bc", "tcptraceroute"]
-
 // Removable Media Settings
 iso_path = "iso/linux/ubuntu"
 iso_file = "ubuntu-22.04.4-live-server-amd64.iso"
@@ -46,4 +43,6 @@ vm_boot_wait  = "5s"
 // Communicator Settings
 communicator_port    = 22
 communicator_timeout = "30m"
-ekk
+
+// Build Template Settings
+from_template = "ubuntu-22.04-lts-base"
