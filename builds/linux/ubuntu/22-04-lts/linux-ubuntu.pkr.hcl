@@ -37,9 +37,10 @@ data "git-repository" "cwd" {}
 //  Defines the local variables.
 
 locals {
-  build_by          = "Built by: HashiCorp Packer ${packer.version}"
-  build_date        = formatdate("YYYY-MM-DD hh:mm ZZZ", timestamp())
-  build_version     = data.git-repository.cwd.head
+  build_by   = "Built by: HashiCorp Packer ${packer.version}"
+  build_date = formatdate("YYYY-MM-DD hh:mm ZZZ", timestamp())
+  # build_version     = data.git-repository.cwd.head
+  build_version     = "BASE"
   build_description = "Version: ${local.build_version}\nBuilt on: ${local.build_date}\n${local.build_by}"
   iso_paths         = ["[${var.common_iso_datastore}] ${var.iso_path}/${var.iso_file}"]
   manifest_date     = formatdate("YYYY-MM-DD hh:mm:ss", timestamp())
@@ -204,15 +205,6 @@ source "vsphere-iso" "linux-ubuntu" {
 build {
   sources = ["source.vsphere-iso.linux-ubuntu"]
 
-  provisioner "shell" {
-    execute_command = "echo '${var.build_password}' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
-    environment_vars = [
-      "BUILD_USERNAME=${var.build_username}",
-    ]
-    scripts           = local.shell_scripts
-    expect_disconnect = true
-  }
-
   provisioner "ansible" {
     user                   = var.build_username
     galaxy_file            = "${path.cwd}/ansible/linux-requirements.yml"
@@ -229,6 +221,15 @@ build {
       "--extra-vars", "ANSIBLE_USERNAME=${var.ansible_username}",
       "--extra-vars", "ANSIBLE_KEY='${var.ansible_key}'",
     ]
+  }
+
+  provisioner "shell" {
+    execute_command = "echo '${var.build_password}' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
+    environment_vars = [
+      "BUILD_USERNAME=${var.build_username}",
+    ]
+    scripts           = local.shell_scripts
+    expect_disconnect = true
   }
 
   post-processor "manifest" {

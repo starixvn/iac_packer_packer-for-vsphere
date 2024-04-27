@@ -275,6 +275,7 @@ variable "iso_file" {
 variable "common_data_source" {
   type        = string
   description = "The provisioning data source. One of `http` or `disk`."
+  default     = "disk"
 }
 
 variable "common_http_ip" {

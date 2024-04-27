@@ -198,7 +198,13 @@ build {
       "--extra-vars", "BUILD_KEY='${var.build_key}'",
       "--extra-vars", "ANSIBLE_USERNAME=${var.ansible_username}",
       "--extra-vars", "ANSIBLE_KEY='${var.ansible_key}'",
-      "--tags", "configure,clean,k8s"
+      "--tags", "configure,clean"
+    ]
+  }
+
+  provisioner "shell" {
+    inline = [
+      "apt-get install -y nfs-common"
     ]
   }
 

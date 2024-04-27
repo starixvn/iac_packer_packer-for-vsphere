@@ -82,6 +82,11 @@
 # groupadd docker
 # usermod -aG docker ubuntu
 
+
+echo '> modifying grub'
+sed -i -e "s/GRUB_CMDLINE_LINUX_DEFAULT=\"\(.*\)\"/GRUB_CMDLINE_LINUX_DEFAULT=\"\"/" /etc/default/grub
+update-grub
+
 apt-get update -y
 # apt-get install net-tools bc tcptraceroute -y
 

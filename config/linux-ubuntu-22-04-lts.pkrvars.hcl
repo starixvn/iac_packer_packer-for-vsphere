@@ -33,7 +33,8 @@ vm_disk_thin_provisioned = true
 vm_network_card          = "vmxnet3"
 
 // Additional Package to install
-// additional_packages = ["net-tools", "bc", "tcptraceroute"]
+additional_packages = ["net-tools", "bc", "tcptraceroute"]
+# additional_packages = ["net-tools"]
 
 // Removable Media Settings
 iso_path = "iso/linux/ubuntu"
