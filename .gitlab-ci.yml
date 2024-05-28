@@ -81,12 +81,15 @@ build_runner:
   image: $IMAGE
   tags: 
     - docker
+  environment:
+    PACKER_PLUGIN_PATH: /workspace/.packer.d/plugins
   before_script:
     - !reference [.general-script, set-build-env]
     - "cat $PACKERVAR_BUILDUSER_CRED_B64 | base64 -d > build.pkrvars.hcl"
     - "cat $PACKERVAR_ANSIBLE_CRED_B64 | base64 -d > ansible.pkrvars.hcl"
     - "packer init \"$INPUT_PATH\""
     - "packer validate -var-file=\"vsphere.pkrvars.hcl\" -var-file=\"build.pkrvars.hcl\" -var-file=\"ansible.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/proxy.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/common.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/$BUILD_VARS\" ${EXTRA_VAR_FILES} \"$INPUT_PATH\""
+
   script:
     - "packer build -force -on-error=ask -var-file=\"vsphere.pkrvars.hcl\" -var-file=\"build.pkrvars.hcl\" -var-file=\"ansible.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/proxy.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/common.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/$BUILD_VARS\" ${EXTRA_VAR_FILES} ${BUILD_ONLY} \"$INPUT_PATH\""
   rules:
@@ -114,3 +117,9 @@ Ubuntu-Server-22.04-K8SNode-(build-from-VM-template):
 
 ##############################################################################
 
+Ubuntu-Server-22.04-SwarmNode-(build-from-VM-template):
+  extends: [.packer-build]
+  variables:
+    INPUT_PATH: "$SCRIPT_PATH/builds/linux/ubuntu/22-04-docker/"
+    BUILD_VARS: "linux-ubuntu-22-04-docker.pkrvars.hcl"
+    EXTRA_VAR_FILES: "-var-file=$CONFIG_PATH/network.pkrvars.hcl -var-file=$CONFIG_PATH/linux-storage.pkrvars.hcl"
