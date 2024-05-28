@@ -87,7 +87,7 @@ build_runner:
     - !reference [.general-script, set-build-env]
     - "cat $PACKERVAR_BUILDUSER_CRED_B64 | base64 -d > build.pkrvars.hcl"
     - "cat $PACKERVAR_ANSIBLE_CRED_B64 | base64 -d > ansible.pkrvars.hcl"
-    - "packer init \"$INPUT_PATH\""
+    # - "packer init \"$INPUT_PATH\""
     - "packer validate -var-file=\"vsphere.pkrvars.hcl\" -var-file=\"build.pkrvars.hcl\" -var-file=\"ansible.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/proxy.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/common.pkrvars.hcl\" -var-file=\"$CONFIG_PATH/$BUILD_VARS\" ${EXTRA_VAR_FILES} \"$INPUT_PATH\""
 
   script:
