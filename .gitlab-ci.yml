@@ -82,7 +82,7 @@ build_runner:
   tags: 
     - docker
   variables:
-    PACKER_PLUGIN_PATH: "/.packer.d/plugins"
+    PACKER_PLUGIN_PATH: "$SCRIPT_PATH/.packer.d/plugins"
   before_script:
     - !reference [.general-script, set-build-env]
     - "cat $PACKERVAR_BUILDUSER_CRED_B64 | base64 -d > build.pkrvars.hcl"
