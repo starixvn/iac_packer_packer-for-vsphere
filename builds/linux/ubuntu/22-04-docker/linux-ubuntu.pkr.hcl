@@ -191,6 +191,16 @@ build {
     ]
   }
 
+  provisioner "shell" {
+    execute_command = "echo '${var.build_password}' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
+    inline = [
+      "truncate -s 0 /etc/machine-id",
+      "rm /var/lib/dbus/machine-id",
+      "ln -s /etc/machine-id /var/lib/dbus/machine-id",
+      "sed -i -e \"s/GRUB_CMDLINE_LINUX_DEFAULT=\\\"\\(.*\\)\\\"/GRUB_CMDLINE_LINUX_DEFAULT=\\\"\\\"/\" /etc/default/grub"
+    ]
+  }
+
   post-processor "manifest" {
     output     = local.manifest_output
     strip_path = true

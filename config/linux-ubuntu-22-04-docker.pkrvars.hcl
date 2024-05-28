@@ -27,7 +27,7 @@ vm_cpu_cores             = 2
 vm_cpu_hot_add           = false
 vm_mem_size              = 2048
 vm_mem_hot_add           = false
-vm_disk_size             = 32768
+vm_disk_size             = 10240
 vm_disk_controller_type  = ["pvscsi"]
 vm_disk_thin_provisioned = true
 vm_network_card          = "vmxnet3"
@@ -45,4 +45,4 @@ communicator_port    = 22
 communicator_timeout = "30m"
 
 // Build Template Settings
-from_template = "ubuntu-22.04-lts-ITBase"
+from_template = "template-linux-ubuntu-22.04-lts-ITBASE"
