@@ -81,7 +81,7 @@ build_runner:
   image: $IMAGE
   tags: 
     - docker
-  environment:
+  variables:
     PACKER_PLUGIN_PATH: "/workspace/.packer.d/plugins"
   before_script:
     - !reference [.general-script, set-build-env]
