@@ -206,7 +206,7 @@ build {
       "sed -i -e \"s/GRUB_CMDLINE_LINUX=\\\"\\(.*\\)\\\"/GRUB_CMDLINE_LINUX=\\\"ipv6.disabled=1\\\"/\" /etc/default/grub",
       "mv /tmp/rc.local /etc/rc.local",
 
-      "apt-mark docker-ce docker-ce-cli containerd.io",
+      "apt-mark hold docker-ce docker-ce-cli containerd.io",
     ]
   }
 
