@@ -166,7 +166,8 @@ build {
       "truncate -s 0 /etc/machine-id",
       "rm /var/lib/dbus/machine-id",
       "ln -s /etc/machine-id /var/lib/dbus/machine-id",
-      "sed -i -e \"s/GRUB_CMDLINE_LINUX_DEFAULT=\\\"\\(.*\\)\\\"/GRUB_CMDLINE_LINUX_DEFAULT=\\\"\\\"/\" /etc/default/grub",
+      "sed -i -e \"s/GRUB_CMDLINE_LINUX_DEFAULT=\\\"\\(.*\\)\\\"/GRUB_CMDLINE_LINUX_DEFAULT=\\\"ipv6.disable=1\\\"/\" /etc/default/grub",
+      "sed -i -e \"s/GRUB_CMDLINE_LINUX=\\\"\\(.*\\)\\\"/GRUB_CMDLINE_LINUX=\\\"ipv6.disable=1\\\"/\" /etc/default/grub",
       "apt update && apt install -y nfs-common python3-pip",
     ]
   }
