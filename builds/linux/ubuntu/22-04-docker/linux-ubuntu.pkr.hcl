@@ -204,6 +204,7 @@ build {
       "ln -s /etc/machine-id /var/lib/dbus/machine-id",
       "sed -i -e \"s/GRUB_CMDLINE_LINUX_DEFAULT=\\\"\\(.*\\)\\\"/GRUB_CMDLINE_LINUX_DEFAULT=\\\"ipv6.disable=1\\\"/\" /etc/default/grub",
       "sed -i -e \"s/GRUB_CMDLINE_LINUX=\\\"\\(.*\\)\\\"/GRUB_CMDLINE_LINUX=\\\"ipv6.disable=1\\\"/\" /etc/default/grub",
+      "update-grub",
       "mv /tmp/rc.local /etc/rc.local",
 
       "apt-mark hold docker-ce docker-ce-cli containerd.io",
