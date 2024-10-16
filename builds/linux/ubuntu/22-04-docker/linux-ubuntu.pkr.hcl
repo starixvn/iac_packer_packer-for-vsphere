@@ -202,9 +202,11 @@ build {
       "truncate -s 0 /etc/machine-id",
       "rm /var/lib/dbus/machine-id",
       "ln -s /etc/machine-id /var/lib/dbus/machine-id",
-      "sed -i -e \"s/GRUB_CMDLINE_LINUX_DEFAULT=\\\"\\(.*\\)\\\"/GRUB_CMDLINE_LINUX_DEFAULT=\\\"ipv6\\\.disabled=1\\\"/\" /etc/default/grub",
-      "sed -i -e \"s/GRUB_CMDLINE_LINUX=\\\"\\(.*\\)\\\"/GRUB_CMDLINE_LINUX=\\\"ipv6\\\.disabled=1\\\"/\" /etc/default/grub",
-      "mv /tmp/rc.local /etc/rc.local"
+      "sed -i -e \"s/GRUB_CMDLINE_LINUX_DEFAULT=\\\"\\(.*\\)\\\"/GRUB_CMDLINE_LINUX_DEFAULT=\\\"ipv6.disabled=1\\\"/\" /etc/default/grub",
+      "sed -i -e \"s/GRUB_CMDLINE_LINUX=\\\"\\(.*\\)\\\"/GRUB_CMDLINE_LINUX=\\\"ipv6.disabled=1\\\"/\" /etc/default/grub",
+      "mv /tmp/rc.local /etc/rc.local",
+
+      "apt-mark docker-ce docker-ce-cli containerd.io",
     ]
   }
 
