@@ -1,4 +1,4 @@
-#!/usr/bin/env bash 
+#!/usr/bin/bash 
 
 # Copyright 2023-2024 Broadcom. All Rights Reserved.
 # SPDX-License-Identifier: BSD-2
@@ -1344,6 +1344,43 @@ menu_option_35() {
 }
 
 menu_option_51() {
+  INPUT_PATH="$SCRIPT_PATH"/builds/linux/ubuntu/22-04-docker/
+  BUILD_PATH=${INPUT_PATH#"${SCRIPT_PATH}/builds/"}
+  BUILD_VARS="$(echo "${BUILD_PATH%/}" | tr -s '/' | tr '/' '-').pkrvars.hcl"
+
+  echo -e "\nCONFIRM: Build a Ubuntu Server 22.04 Swarm Template for VMware vSphere?"
+  echo -e "\nContinue? (y/n)"
+  read -r REPLY
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    exit 1
+  fi
+
+  ### Build a Ubuntu Server 22.04 LTS (cloud-init) Template for VMware vSphere. ###
+  echo "Building a Ubuntu Server 22.04 LTS (cloud-init) Template for VMware vSphere..."
+
+  ### Initialize HashiCorp Packer and required plugins. ###
+  echo "Initializing HashiCorp Packer and required plugins..."
+  packer init "$INPUT_PATH"
+
+  ### Start the Build. ###
+  echo "Starting the build...."
+  echo "packer build -force -on-error=ask $debug_option"
+  packer build -force -on-error=ask $debug_option \
+      -var-file="$CONFIG_PATH/vsphere.pkrvars.hcl" \
+      -var-file="$CONFIG_PATH/build.pkrvars.hcl" \
+      -var-file="$CONFIG_PATH/ansible.pkrvars.hcl" \
+      -var-file="$CONFIG_PATH/proxy.pkrvars.hcl" \
+      -var-file="$CONFIG_PATH/common.pkrvars.hcl" \
+      -var-file="$CONFIG_PATH/network.pkrvars.hcl" \
+      -var-file="$CONFIG_PATH/linux-storage.pkrvars.hcl" \
+      -var-file="$CONFIG_PATH/$BUILD_VARS" \
+      "$INPUT_PATH"
+
+  ### Build Complete. ###
+  echo "Build Complete."
+}
+
+menu_option_52() {
   INPUT_PATH="$SCRIPT_PATH"/builds/linux/ubuntu/22-04-k8snode/
   BUILD_PATH=${INPUT_PATH#"${SCRIPT_PATH}/builds/"}
   BUILD_VARS="$(echo "${BUILD_PATH%/}" | tr -s '/' | tr '/' '-').pkrvars.hcl"
@@ -1380,12 +1417,12 @@ menu_option_51() {
   echo "Build Complete."
 }
 
-menu_option_52() {
-  INPUT_PATH="$SCRIPT_PATH"/builds/linux/ubuntu/22-04-docker/
+menu_option_53() {
+  INPUT_PATH="$SCRIPT_PATH"/builds/linux/ubuntu/22-04-k3snode/
   BUILD_PATH=${INPUT_PATH#"${SCRIPT_PATH}/builds/"}
   BUILD_VARS="$(echo "${BUILD_PATH%/}" | tr -s '/' | tr '/' '-').pkrvars.hcl"
 
-  echo -e "\nCONFIRM: Build a Ubuntu Server 22.04 Swarm Template for VMware vSphere?"
+  echo -e "\nCONFIRM: Build a Ubuntu Server 22.04 K3S Template for VMware vSphere?"
   echo -e "\nContinue? (y/n)"
   read -r REPLY
   if [[ ! $REPLY =~ ^[Yy]$ ]]; then
@@ -1486,8 +1523,9 @@ until [ "$selection" = "0" ]; do
   echo ""
   echo "      Custom OS:"
   echo ""
-  echo "        51  -  Ubuntu Server 22.04 K8SNode (From Template)"
-  echo "        52  -  Ubuntu Server 22.04 Swarm (From Template)"
+  echo "        51  -  Ubuntu Server 22.04 Swarm (From Template)"
+  echo "        52  -  Ubuntu Server 22.04 K8SNode (From Template)"
+  echo "        53  -  Ubuntu Server 22.04 K3SNode (From Template)"
   echo ""
   echo "      Other:"
   echo ""
@@ -1534,6 +1572,7 @@ until [ "$selection" = "0" ]; do
     35 ) clear ; menu_option_35 ; press_enter ;;
     51 ) clear ; menu_option_51 ; press_enter ;;
     52 ) clear ; menu_option_52 ; press_enter ;;
+    53 ) clear ; menu_option_53 ; press_enter ;;
     i|I ) clear ; info ; press_enter ;;
     q|Q ) clear ; exit ;;
     * ) clear ; incorrect_selection ; press_enter ;;

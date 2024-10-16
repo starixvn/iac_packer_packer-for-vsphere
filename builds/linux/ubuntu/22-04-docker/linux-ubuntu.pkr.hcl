@@ -191,13 +191,19 @@ build {
     ]
   }
 
+  provisioner "file" {
+    source      = "${path.cwd}/scripts/linux/ubuntu22-04-docker/rc.local"
+    destination = "/tmp/rc.local"
+  }
+
   provisioner "shell" {
     execute_command = "echo '${var.build_password}' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
     inline = [
       "truncate -s 0 /etc/machine-id",
       "rm /var/lib/dbus/machine-id",
       "ln -s /etc/machine-id /var/lib/dbus/machine-id",
-      "sed -i -e \"s/GRUB_CMDLINE_LINUX_DEFAULT=\\\"\\(.*\\)\\\"/GRUB_CMDLINE_LINUX_DEFAULT=\\\"\\\"/\" /etc/default/grub"
+      "sed -i -e \"s/GRUB_CMDLINE_LINUX_DEFAULT=\\\"\\(.*\\)\\\"/GRUB_CMDLINE_LINUX_DEFAULT=\\\"\\\"/\" /etc/default/grub",
+      "mv /tmp/rc.local /etc/rc.local"
     ]
   }
 
