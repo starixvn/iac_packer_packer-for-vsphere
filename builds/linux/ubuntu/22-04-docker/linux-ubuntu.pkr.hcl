@@ -46,7 +46,7 @@ locals {
 //  BLOCK: source
 //  Defines the builder configuration blocks.
 
-source "vsphere-clone" "linux-ubuntu-k8snode" {
+source "vsphere-clone" "linux-ubuntu-swarmnode" {
   // vCenter Server Endpoint Settings and Credentials
   vcenter_server      = var.vsphere_endpoint
   username            = var.vsphere_username
@@ -147,7 +147,7 @@ source "vsphere-clone" "linux-ubuntu-k8snode" {
 //  Defines the builders to run, provisioners, and post-processors.
 
 build {
-  sources = ["vsphere-clone.linux-ubuntu-k8snode"]
+  sources = ["vsphere-clone.linux-ubuntu-swarmnode"]
 
   provisioner "ansible" {
     user                   = var.build_username
