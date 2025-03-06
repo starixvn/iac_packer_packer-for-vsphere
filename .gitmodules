@@ -4,4 +4,4 @@
 [submodule "kubespray-project"]
 	path = kubespray-project
 	url = git@gitlab.nexdev.net:iac/ansible/kubespray-project.git
-  branch = release-2.26
+  	branch = release-2.26
