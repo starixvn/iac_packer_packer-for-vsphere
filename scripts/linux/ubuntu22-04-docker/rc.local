@@ -1,0 +1,14 @@
+#!/bin/bash
+if test -z "$(find /etc/ssh/ -iname 'ssh_host_*_key*')"; then
+    dpkg-reconfigure openssh-server
+fi
+
+nic=("ens160" "ens192" "ens18")
+for i in "${nic[@]}"; do
+    if [ $(netplan get ethernets.${i}.transmit-checksum-offload 2>/dev/null) == null ] && [[ $(ifconfig) =~ "${i}" ]]; then
+        netplan set ethernets.${i}.transmit-checksum-offload=false 2>&1 1>/dev/null
+        netplan apply
+    fi
+done
+
+exit 0

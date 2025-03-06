@@ -161,24 +161,24 @@ build {
   sources = ["vsphere-clone.linux-ubuntu-k8snode"]
 
   provisioner "ansible" {
+    # galaxy_file            = "${path.cwd}/ansible/ansible-galaxy.yml"
     user                   = var.build_username
-    galaxy_file            = "${path.cwd}/kubespray/ansible_galaxy.yml"
     galaxy_force_with_deps = true
-    playbook_file          = "${path.cwd}/kubespray/cluster.yml"
-    roles_path             = "${path.cwd}/kubespray/roles"
+    playbook_file          = "${path.cwd}/kubespray-project/cluster.yml"
+    roles_path             = "${path.cwd}/kubespray-project/roles"
     host_alias             = "k8snode"
     groups                 = ["etcd", "k8s_cluster", "kube_control_plane", "kube_node"]
     ansible_env_vars = [
-      "ANSIBLE_CONFIG=${path.cwd}/kubespray/ansible.cfg",
-      "ANSIBLE_HOST_KEY_CHECKING=False",
-      "ANSIBLE_SSH_ARGS='-o ForwardAgent=yes -o ControlMaster=auto -o ControlPersist=30m -o ConnectionAttempts=100'"
+      "ANSIBLE_CONFIG=${path.cwd}/kubespray-project/ansible.cfg",
     ]
     extra_arguments = [
       "--become",
       "--scp-extra-args", "'-O'",
       "--extra-vars", "local_release_dir='/kubespray_cache/releases'",
       "--extra-vars", "download_cache_dir='/kubespray_cache/kubespray_cache'",
-      "--extra-vars", "kube_version='v1.27.5'",
+      "--extra-vars", "kube_version='v1.30.4'",
+      "--extra-vars", "download_container=True",
+      "--extra-vars", "download_always_pull=True",
       "--tags", "facts,preinstall,download,container-engine"
     ]
   }
@@ -208,12 +208,13 @@ build {
       "truncate -s 0 /etc/machine-id",
       "rm /var/lib/dbus/machine-id",
       "ln -s /etc/machine-id /var/lib/dbus/machine-id",
-      "sed -i -e \"s/GRUB_CMDLINE_LINUX_DEFAULT=\\\"\\(.*\\)\\\"/GRUB_CMDLINE_LINUX_DEFAULT=\\\"\\\"/\" /etc/default/grub",
+      "sed -i -e \"s/GRUB_CMDLINE_LINUX_DEFAULT=\\\"\\(.*\\)\\\"/GRUB_CMDLINE_LINUX_DEFAULT=\\\"ipv6.disable=1\\\"/\" /etc/default/grub",
+      "sed -i -e \"s/GRUB_CMDLINE_LINUX=\\\"\\(.*\\)\\\"/GRUB_CMDLINE_LINUX=\\\"ipv6.disable=1\\\"/\" /etc/default/grub",
+      "update-grub",
+      "echo \"fs.inotify.max_user_instances=8192\" >> /etc/sysctl.conf",
+      "echo \"fs.inotify.max_user_watches=524288\" >> /etc/sysctl.conf",
       "apt-get install -y nfs-common"
     ]
-
-
-
   }
 
   post-processor "manifest" {

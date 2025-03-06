@@ -46,7 +46,7 @@ locals {
 //  BLOCK: source
 //  Defines the builder configuration blocks.
 
-source "vsphere-clone" "linux-ubuntu-k8snode" {
+source "vsphere-clone" "linux-ubuntu-swarmnode" {
   // vCenter Server Endpoint Settings and Credentials
   vcenter_server      = var.vsphere_endpoint
   username            = var.vsphere_username
@@ -147,7 +147,7 @@ source "vsphere-clone" "linux-ubuntu-k8snode" {
 //  Defines the builders to run, provisioners, and post-processors.
 
 build {
-  sources = ["vsphere-clone.linux-ubuntu-k8snode"]
+  sources = ["vsphere-clone.linux-ubuntu-swarmnode"]
 
   provisioner "ansible" {
     user                   = var.build_username
@@ -191,13 +191,24 @@ build {
     ]
   }
 
+  provisioner "file" {
+    source      = "${path.cwd}/scripts/linux/ubuntu22-04-docker/rc.local"
+    destination = "/tmp/rc.local"
+  }
+
   provisioner "shell" {
     execute_command = "echo '${var.build_password}' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
     inline = [
       "truncate -s 0 /etc/machine-id",
       "rm /var/lib/dbus/machine-id",
       "ln -s /etc/machine-id /var/lib/dbus/machine-id",
-      "sed -i -e \"s/GRUB_CMDLINE_LINUX_DEFAULT=\\\"\\(.*\\)\\\"/GRUB_CMDLINE_LINUX_DEFAULT=\\\"\\\"/\" /etc/default/grub"
+      "sed -i -e \"s/GRUB_CMDLINE_LINUX_DEFAULT=\\\"\\(.*\\)\\\"/GRUB_CMDLINE_LINUX_DEFAULT=\\\"ipv6.disable=1\\\"/\" /etc/default/grub",
+      "sed -i -e \"s/GRUB_CMDLINE_LINUX=\\\"\\(.*\\)\\\"/GRUB_CMDLINE_LINUX=\\\"ipv6.disable=1\\\"/\" /etc/default/grub",
+      "update-grub",
+      "echo \"fs.inotify.max_user_instances=8192\" >> /etc/sysctl.conf",
+      "echo \"fs.inotify.max_user_watches=524288\" >> /etc/sysctl.conf",
+      "mv /tmp/rc.local /etc/rc.local",
+      "apt-mark hold docker-ce docker-ce-cli containerd.io",
     ]
   }
 
